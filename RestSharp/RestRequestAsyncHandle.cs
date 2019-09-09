@@ -4,13 +4,13 @@ namespace RestSharp
 {
     public class RestRequestAsyncHandle
     {
-        public HttpWebRequest WebRequest;
+        public IHttpWebRequest WebRequest;
 
         public RestRequestAsyncHandle()
         {
         }
 
-        public RestRequestAsyncHandle(HttpWebRequest webRequest)
+        public RestRequestAsyncHandle(IHttpWebRequest webRequest)
         {
             WebRequest = webRequest;
         }
