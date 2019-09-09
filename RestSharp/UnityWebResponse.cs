@@ -11,6 +11,7 @@ namespace RestSharp
     public class UnityWebResponse : IHttpWebResponse
     {
         private UnityWebRequest mRequest;
+        private MemoryStream mResponseStream;
 
         public string ContentEncoding => throw new NotImplementedException();
 
@@ -35,16 +36,17 @@ namespace RestSharp
         public UnityWebResponse(UnityWebRequest request)
         {
             mRequest = request;
+            mResponseStream = new MemoryStream(mRequest.downloadHandler.data);
         }
 
         public void Close()
         {
-            throw new NotImplementedException();
+            mRequest.Dispose();
         }
 
         public Stream GetResponseStream()
         {
-            throw new NotImplementedException();
+            return mResponseStream;
         }
 
         #region IDisposable Support
