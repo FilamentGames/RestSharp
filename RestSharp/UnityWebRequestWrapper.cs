@@ -233,11 +233,6 @@ namespace RestSharp
             return mRequest.SendWebRequest();
         }
 
-        private void handleOperationCompleted(UnityEngine.AsyncOperation obj)
-        {
-            throw new NotImplementedException();
-        }
-
         public IHttpWebResponse EndGetResponse(IAsyncResult asyncResult)
         {
             while (!mOperation.isDone);
