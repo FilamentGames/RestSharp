@@ -316,7 +316,7 @@ namespace RestSharp
 
     class UnityWebRequestResult : IAsyncResult
     {
-        private UnityWebRequestWrapper mAsyncState;
+        private readonly UnityWebRequestWrapper mAsyncState;
 
         public object AsyncState => mAsyncState;
 
