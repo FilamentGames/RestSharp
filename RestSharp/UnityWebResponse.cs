@@ -34,7 +34,9 @@ namespace RestSharp
 
         public NameValueCollection Headers { get; private set; }
 
+#pragma warning disable CS3001 // Argument type is not CLS-compliant
         public UnityWebResponse(UnityWebRequest request)
+#pragma warning restore CS3001 // Argument type is not CLS-compliant
         {
             mRequest = request;
             mResponseStream = new MemoryStream(mRequest.downloadHandler.data);
