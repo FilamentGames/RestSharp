@@ -19,7 +19,6 @@ namespace RestSharp
 
         public UnityWebRequestWrapper(Uri url) {
             mRequest = new UnityWebRequest(url);
-            mRequest.useHttpContinue = false;
             CookieContainer = new CookieContainer();
             Headers = new WebHeaderCollection();
             ServicePoint = ServicePointManager.FindServicePoint(url);
@@ -317,17 +316,15 @@ namespace RestSharp
 
     class UnityWebRequestResult : IAsyncResult
     {
-        private bool mCompleted = false;
-        private bool mCompletedSynchronously = false;
         private UnityWebRequestWrapper mAsyncState;
 
         public object AsyncState => mAsyncState;
 
         public WaitHandle AsyncWaitHandle => new UnityWebRequestWaitHandle();
 
-        public bool CompletedSynchronously => mCompletedSynchronously;
+        public bool CompletedSynchronously { get; private set; } = false;
 
-        public bool IsCompleted => mCompleted;
+        public bool IsCompleted { get; private set; } = false;
 
         public UnityWebRequestResult(UnityWebRequestWrapper request)
         {
@@ -336,8 +333,8 @@ namespace RestSharp
 
         public void Complete(bool synchronous)
         {
-            mCompleted = true;
-            mCompletedSynchronously = synchronous;
+            IsCompleted = true;
+            CompletedSynchronously = synchronous;
         }
     }
 }
