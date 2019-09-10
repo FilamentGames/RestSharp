@@ -80,7 +80,7 @@ namespace RestSharp
 
         private RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod,
-            Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
+            Func<IHttp, Action<HttpResponse>, string, IHttpWebRequest> getWebRequest)
         {
             var http = HttpFactory.Create();
             AuthenticateIfNeeded(this, request);
@@ -105,12 +105,12 @@ namespace RestSharp
             return asyncHandle;
         }
 
-        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> response_cb, string method)
+        private static IHttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> response_cb, string method)
         {
             return http.AsGetAsync(response_cb, method);
         }
 
-        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> response_cb, string method)
+        private static IHttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> response_cb, string method)
         {
             return http.AsPostAsync(response_cb, method);
         }

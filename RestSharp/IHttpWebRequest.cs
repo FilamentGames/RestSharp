@@ -14,7 +14,7 @@ namespace RestSharp
         string Accept { get; set; }
         DateTime Date { get; set; }
         string Host { get; set; }
-        public Uri RequestUri { get; }
+        Uri RequestUri { get; }
         long ContentLength { get; set;  }
         bool KeepAlive { get; set; }
         string Expect { get; set; }
@@ -45,7 +45,7 @@ namespace RestSharp
         IAsyncResult BeginGetResponse(AsyncCallback callback, IHttpWebRequest webRequest);
         IAsyncResult BeginGetRequestStream(AsyncCallback callback, IHttpWebRequest webRequest);
         Stream EndGetRequestStream(IAsyncResult asyncResult);
-        public IHttpWebResponse GetResponse();
+        IHttpWebResponse GetResponse();
         IHttpWebResponse EndGetResponse(IAsyncResult asyncResult);
         void Abort();
         void AddRange(string rangeSpecifier, long from, long to);

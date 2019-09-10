@@ -174,7 +174,7 @@ namespace RestSharp
             httpResponse.ResponseStatus = ResponseStatus.Error;
         }
 
-        private HttpResponse GetResponse(HttpWebRequest request)
+        private HttpResponse GetResponse(IHttpWebRequest request)
         {
             var response = new HttpResponse { ResponseStatus = ResponseStatus.None };
 
@@ -191,30 +191,12 @@ namespace RestSharp
             return response;
         }
 
-        private static HttpWebResponse GetRawResponse(HttpWebRequest request)
+        private static IHttpWebResponse GetRawResponse(IHttpWebRequest request)
         {
-            try
-            {
-                return (HttpWebResponse)request.GetResponse();
-            }
-            catch (WebException ex)
-            {
-                // Check to see if this is an HTTP error or a transport error.
-                // In cases where an HTTP error occurs ( status code >= 400 )
-                // return the underlying HTTP response, otherwise assume a
-                // transport exception (ex: connection timeout) and
-                // rethrow the exception
-
-                if (ex.Response is HttpWebResponse)
-                {
-                    return ex.Response as HttpWebResponse;
-                }
-
-                throw;
-            }
+            return request.GetResponse();
         }
 
-        private void PreparePostData(HttpWebRequest webRequest)
+        private void PreparePostData(IHttpWebRequest webRequest)
         {
             if (HasFiles || AlwaysMultipartFormData)
             {
@@ -229,7 +211,7 @@ namespace RestSharp
             PreparePostBody(webRequest);
         }
 
-        private void WriteRequestBody(HttpWebRequest webRequest)
+        private void WriteRequestBody(IHttpWebRequest webRequest)
         {
             if (!HasBody)
                 return;
@@ -246,9 +228,9 @@ namespace RestSharp
 
         // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
         // TODO: duplication at the moment).
-        private HttpWebRequest ConfigureWebRequest(string method, Uri url)
+        private IHttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
-            var webRequest = (HttpWebRequest)WebRequest.Create(url);
+            var webRequest = new UnityWebRequestWrapper(url);
 #if !PocketPC
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 #endif

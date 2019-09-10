@@ -208,7 +208,7 @@ namespace RestSharp
             this.Parameters = new List<HttpParameter>();
             this.Cookies = new List<HttpCookie>();
 
-            restrictedHeaderActions = new Dictionary<string, Action<HttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
+            restrictedHeaderActions = new Dictionary<string, Action<IHttpWebRequest, string>>(StringComparer.OrdinalIgnoreCase);
 
             this.AddSharedHeaderActions();
             this.AddSyncHeaderActions();
@@ -271,11 +271,11 @@ namespace RestSharp
             return string.Format("--{0}--{1}", FORM_BOUNDARY, LINE_BREAK);
         }
 
-        private readonly IDictionary<string, Action<HttpWebRequest, string>> restrictedHeaderActions;
+        private readonly IDictionary<string, Action<IHttpWebRequest, string>> restrictedHeaderActions;
 
         // handle restricted headers the .NET way - thanks @dimebrain!
         // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
-        private void AppendHeaders(HttpWebRequest webRequest)
+        private void AppendHeaders(IHttpWebRequest webRequest)
         {
             foreach (var header in Headers)
             {
@@ -294,7 +294,7 @@ namespace RestSharp
             }
         }
 
-        private void AppendCookies(HttpWebRequest webRequest)
+        private void AppendCookies(IHttpWebRequest webRequest)
         {
 #if !PocketPC
             webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
@@ -341,7 +341,7 @@ namespace RestSharp
             return querystring.ToString();
         }
 
-        private void PreparePostBody(HttpWebRequest webRequest)
+        private void PreparePostBody(IHttpWebRequest webRequest)
         {
             if (HasFiles || AlwaysMultipartFormData)
             {
@@ -384,7 +384,7 @@ namespace RestSharp
             WriteStringTo(requestStream, GetMultipartFooter());
         }
 
-        private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
+        private void ExtractResponseData(HttpResponse response, IHttpWebResponse webResponse)
         {
             using (webResponse)
             {
@@ -462,7 +462,7 @@ namespace RestSharp
         }
 
 #if FRAMEWORK
-        private void AddRange(HttpWebRequest r, string range)
+        private void AddRange(IHttpWebRequest r, string range)
         {
             System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(range, "(\\w+)=(\\d+)-(\\d+)$");
 

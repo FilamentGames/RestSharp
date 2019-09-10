@@ -116,6 +116,8 @@
     <Compile Include="Extensions\MonoHttp\HttpUtility.cs" />
     <Compile Include="Extensions\ResponseExtensions.cs" />
     <Compile Include="Extensions\ResponseStatusExtensions.cs" />
+    <Compile Include="IHttpWebRequest.cs" />
+    <Compile Include="IHttpWebResponse.cs" />
     <Compile Include="RestClientExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Http.Sync.cs" />
@@ -164,6 +166,8 @@
     </None>
     <Compile Include="SharedAssemblyInfo.cs" />
     <Compile Include="SimpleJson.cs" />
+    <Compile Include="UnityWebRequestWrapper.cs" />
+    <Compile Include="UnityWebResponse.cs" />
     <Compile Include="Validation\Validate.cs" />
     <Compile Include="Validation\Require.cs" />
     <Compile Include="RestRequestAsyncHandle.cs" />

@@ -81,25 +81,25 @@ namespace RestSharp
 
         Uri Url { get; set; }
 
-        HttpWebRequest DeleteAsync(Action<HttpResponse> action);
+        IHttpWebRequest DeleteAsync(Action<HttpResponse> action);
 
-        HttpWebRequest GetAsync(Action<HttpResponse> action);
+        IHttpWebRequest GetAsync(Action<HttpResponse> action);
 
-        HttpWebRequest HeadAsync(Action<HttpResponse> action);
+        IHttpWebRequest HeadAsync(Action<HttpResponse> action);
 
-        HttpWebRequest OptionsAsync(Action<HttpResponse> action);
+        IHttpWebRequest OptionsAsync(Action<HttpResponse> action);
 
-        HttpWebRequest PostAsync(Action<HttpResponse> action);
+        IHttpWebRequest PostAsync(Action<HttpResponse> action);
 
-        HttpWebRequest PutAsync(Action<HttpResponse> action);
+        IHttpWebRequest PutAsync(Action<HttpResponse> action);
 
-        HttpWebRequest PatchAsync(Action<HttpResponse> action);
+        IHttpWebRequest PatchAsync(Action<HttpResponse> action);
 
-        HttpWebRequest MergeAsync(Action<HttpResponse> action);
+        IHttpWebRequest MergeAsync(Action<HttpResponse> action);
 
-        HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod);
+        IHttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod);
 
-        HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod);
+        IHttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod);
 
 #if FRAMEWORK || PocketPC
         HttpResponse Delete();

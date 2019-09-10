@@ -43,42 +43,42 @@ namespace RestSharp
     {
         private TimeOutState timeoutState;
 
-        public HttpWebRequest DeleteAsync(Action<HttpResponse> action)
+        public IHttpWebRequest DeleteAsync(Action<HttpResponse> action)
         {
             return GetStyleMethodInternalAsync("DELETE", action);
         }
 
-        public HttpWebRequest GetAsync(Action<HttpResponse> action)
+        public IHttpWebRequest GetAsync(Action<HttpResponse> action)
         {
             return GetStyleMethodInternalAsync("GET", action);
         }
 
-        public HttpWebRequest HeadAsync(Action<HttpResponse> action)
+        public IHttpWebRequest HeadAsync(Action<HttpResponse> action)
         {
             return GetStyleMethodInternalAsync("HEAD", action);
         }
 
-        public HttpWebRequest OptionsAsync(Action<HttpResponse> action)
+        public IHttpWebRequest OptionsAsync(Action<HttpResponse> action)
         {
             return GetStyleMethodInternalAsync("OPTIONS", action);
         }
 
-        public HttpWebRequest PostAsync(Action<HttpResponse> action)
+        public IHttpWebRequest PostAsync(Action<HttpResponse> action)
         {
             return PutPostInternalAsync("POST", action);
         }
 
-        public HttpWebRequest PutAsync(Action<HttpResponse> action)
+        public IHttpWebRequest PutAsync(Action<HttpResponse> action)
         {
             return PutPostInternalAsync("PUT", action);
         }
 
-        public HttpWebRequest PatchAsync(Action<HttpResponse> action)
+        public IHttpWebRequest PatchAsync(Action<HttpResponse> action)
         {
             return PutPostInternalAsync("PATCH", action);
         }
 
-        public HttpWebRequest MergeAsync(Action<HttpResponse> action)
+        public IHttpWebRequest MergeAsync(Action<HttpResponse> action)
         {
             return PutPostInternalAsync("MERGE", action);
         }
@@ -89,7 +89,7 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
+        public IHttpWebRequest AsPostAsync(Action<HttpResponse> action, string httpMethod)
         {
 #if PocketPC
             return PutPostInternalAsync(httpMethod.ToUpper(), action);
@@ -104,7 +104,7 @@ namespace RestSharp
         /// <param name="action"></param>
         /// <param name="httpMethod">The HTTP method to execute.</param>
         /// <returns></returns>
-        public HttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
+        public IHttpWebRequest AsGetAsync(Action<HttpResponse> action, string httpMethod)
         {
 #if PocketPC
             return GetStyleMethodInternalAsync(httpMethod.ToUpper(), action);
@@ -113,9 +113,9 @@ namespace RestSharp
 #endif
         }
 
-        private HttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
+        private IHttpWebRequest GetStyleMethodInternalAsync(string method, Action<HttpResponse> callback)
         {
-            HttpWebRequest webRequest = null;
+            IHttpWebRequest webRequest = null;
 
             try
             {
@@ -162,9 +162,9 @@ namespace RestSharp
             return response;
         }
 
-        private HttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
+        private IHttpWebRequest PutPostInternalAsync(string method, Action<HttpResponse> callback)
         {
-            HttpWebRequest webRequest = null;
+            IHttpWebRequest webRequest = null;
 
             try
             {
@@ -180,7 +180,7 @@ namespace RestSharp
             return webRequest;
         }
 
-        private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
+        private void WriteRequestBodyAsync(IHttpWebRequest webRequest, Action<HttpResponse> callback)
         {
             IAsyncResult asyncResult;
             this.timeoutState = new TimeOutState { Request = webRequest };
@@ -229,7 +229,7 @@ namespace RestSharp
 
         private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
         {
-            var webRequest = (HttpWebRequest)result.AsyncState;
+            var webRequest = (IHttpWebRequest)result.AsyncState;
 
             if (this.timeoutState.TimedOut)
             {
@@ -301,37 +301,13 @@ namespace RestSharp
             }
         }
 
-        private static void GetRawResponseAsync(IAsyncResult result, Action<HttpWebResponse> callback)
+        private static void GetRawResponseAsync(IAsyncResult result, Action<IHttpWebResponse> callback)
         {
-            HttpWebResponse raw;
+            IHttpWebResponse raw;
 
-            try
-            {
-                var webRequest = (HttpWebRequest)result.AsyncState;
-                raw = webRequest.EndGetResponse(result) as HttpWebResponse;
-            }
-            catch (WebException ex)
-            {
-                if (ex.Status == WebExceptionStatus.RequestCanceled)
-                {
-                    throw;
-                }
-
-                // Check to see if this is an HTTP error or a transport error.
-                // In cases where an HTTP error occurs ( status code >= 400 )
-                // return the underlying HTTP response, otherwise assume a
-                // transport exception (ex: connection timeout) and
-                // rethrow the exception
-
-                if (ex.Response is HttpWebResponse)
-                {
-                    raw = ex.Response as HttpWebResponse;
-                }
-                else
-                {
-                    throw;
-                }
-            }
+    
+            var webRequest = (IHttpWebRequest)result.AsyncState;
+            raw = webRequest.EndGetResponse(result);
 
             callback(raw);
 
@@ -395,13 +371,13 @@ namespace RestSharp
 
         // TODO: Try to merge the shared parts between ConfigureWebRequest and ConfigureAsyncWebRequest (quite a bit of code
         // TODO: duplication at the moment).
-        private HttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
+        private IHttpWebRequest ConfigureAsyncWebRequest(string method, Uri url)
         {
 #if SILVERLIGHT
             WebRequest.RegisterPrefix("http://", WebRequestCreator.ClientHttp);
             WebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
 #endif
-            var webRequest = (HttpWebRequest)WebRequest.Create(url);
+            var webRequest = (IHttpWebRequest)WebRequest.Create(url);
 #if !PocketPC
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 #endif
@@ -444,7 +420,7 @@ namespace RestSharp
 
             webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
-            webRequest.ServicePoint.Expect100Continue = false;
+            webRequest.Expect100Continue = false;
 
             if (Timeout != 0)
             {
@@ -477,7 +453,7 @@ namespace RestSharp
         {
             public bool TimedOut { get; set; }
 
-            public HttpWebRequest Request { get; set; }
+            public IHttpWebRequest Request { get; set; }
         }
     }
 }
