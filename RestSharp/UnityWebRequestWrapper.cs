@@ -11,136 +11,114 @@ using UnityEngine.Networking;
 
 namespace RestSharp 
 {
-    public class UnityWebRequestWrapper : IHttpWebRequest 
-    {
+    public class UnityWebRequestWrapper : IHttpWebRequest {
 
         private UnityWebRequest mRequest;
         private UnityWebRequestAsyncOperation mOperation;
         private MemoryStream mRequestStream;
-        private CookieContainer mCookies;
 
-        public UnityWebRequestWrapper(Uri url) 
-        {
+        public UnityWebRequestWrapper(Uri url) {
             mRequest = new UnityWebRequest(url);
             mRequest.useHttpContinue = false;
-            mCookies = new CookieContainer();
+            mRequestStream = new MemoryStream();
+            CookieContainer = new CookieContainer();
+            Headers = new WebHeaderCollection();
+            ServicePoint = ServicePointManager.FindServicePoint(url);
         }
 
-        public string ContentType
-        {
-            get => mRequest.GetRequestHeader("Content-Type");
-            set => mRequest.SetRequestHeader("Content-Type", value);
+        public string ContentType {
+            get => Headers.Get("Content-Type");
+            set => Headers.Set("Content-Type", value);
         }
-        public string Accept
-        {
-            get => mRequest.GetRequestHeader("Accept");
-            set => mRequest.SetRequestHeader("Accept", value);
+        public string Accept {
+            get => Headers.Get("Accept");
+            set => Headers.Set("Accept", value);
         }
-        public DateTime Date
-        {
-            get => DateTime.ParseExact(mRequest.GetRequestHeader("Date"), CultureInfo.CurrentCulture.DateTimeFormat.RFC1123Pattern, CultureInfo.CurrentCulture);
-            set => mRequest.SetRequestHeader("Date", value.ToUniversalTime().ToString("r"));
+        public DateTime Date {
+            get => DateTime.ParseExact(Headers.Get("Date"), CultureInfo.CurrentCulture.DateTimeFormat.RFC1123Pattern, CultureInfo.CurrentCulture);
+            set => Headers.Set("Date", value.ToUniversalTime().ToString("r"));
         }
         public string Host {
-            get => mRequest.GetRequestHeader("Host");
-            set => mRequest.SetRequestHeader("Host", value);
+            get => Headers.Get("Host");
+            set => Headers.Set("Host", value);
         }
-        public Uri RequestUri
-        {
+        public Uri RequestUri {
             get => mRequest.uri;
         }
-        public long ContentLength
-        {
-            get => long.Parse(mRequest.GetRequestHeader("Content-Length"));
-            set => mRequest.SetRequestHeader("Content-Length", value.ToString());
-        }
-        public bool KeepAlive
-        {
-            get => false;
+        public long ContentLength {
+            get => 0;
             set
             {
+
             }
         }
-        public string Expect
-        {
-            get => mRequest.GetRequestHeader("Expect");
-            set => mRequest.SetRequestHeader("Expect", value);
+        public bool KeepAlive {
+            get => false;
+            set {
+            }
         }
-        public DateTime IfModifiedSince
-        {
-            get => DateTime.ParseExact(mRequest.GetRequestHeader("If-Modified-Since"), CultureInfo.CurrentCulture.DateTimeFormat.RFC1123Pattern, CultureInfo.CurrentCulture);
-            set => mRequest.SetRequestHeader("If-Modified-Since", value.ToUniversalTime().ToString("r"));
+        public string Expect {
+            get => Headers.Get("Expect");
+            set => Headers.Set("Expect", value);
         }
-        public string Referer
-        {
-            get => mRequest.GetRequestHeader("Referer");
-            set => mRequest.SetRequestHeader("Referer", value);
+        public DateTime IfModifiedSince {
+            get => DateTime.ParseExact(Headers.Get("If-Modified-Since"), CultureInfo.CurrentCulture.DateTimeFormat.RFC1123Pattern, CultureInfo.CurrentCulture);
+            set => Headers.Set("If-Modified-Since", value.ToUniversalTime().ToString("r"));
         }
-        public string TransferEncoding
-        {
-            get => mRequest.GetRequestHeader("Transfer-Encoding");
-            set => mRequest.SetRequestHeader("Transfer-Encoding", value);
+        public string Referer {
+            get => Headers.Get("Referer");
+            set => Headers.Set("Referer", value);
         }
-        public bool SendChunked
-        {
+        public string TransferEncoding {
+            get => Headers.Get("Transfer-Encoding");
+            set => Headers.Set("Transfer-Encoding", value);
+        }
+        public bool SendChunked {
             get => mRequest.chunkedTransfer;
             set => mRequest.chunkedTransfer = value;
         }
-        public bool UseDefaultCredentials
-        {
+        public bool UseDefaultCredentials {
             get => false;
-            set
-            {
+            set {
             }
         }
-        public bool PreAuthenticate
-        {
+        public bool PreAuthenticate {
             get => false;
-            set
-            {
+            set {
             }
         }
-        public bool Pipelined
-        {
+        public bool Pipelined {
             get => false;
-            set
-            {
+            set {
 
             }
         }
-        public bool UnsafeAuthenticatedConnectionSharing
-        {
+        public bool UnsafeAuthenticatedConnectionSharing {
             get => false;
-            set
-            {
+            set {
 
             }
         }
-        public string Method
-        {
+        public string Method {
             get => mRequest.method;
             set => mRequest.method = value;
         }
-        public string UserAgent
-        {
-            get => mRequest.GetRequestHeader("User-Agent");
-            set => mRequest.SetRequestHeader("User-Agent", value);
+        public string UserAgent {
+            get => Headers.Get("User-Agent");
+            set => Headers.Set("User-Agent", value);
         }
         public int Timeout { get => mRequest.timeout; set => mRequest.timeout = value; }
         public int ReadWriteTimeout {
             get => 0;
-            set
-            {
+            set {
             }
         }
-        public bool AllowAutoRedirect
-        {
+        public bool AllowAutoRedirect {
             get => true;
             set {
             }
         }
-        public int MaximumAutomaticRedirections
-        {
+        public int MaximumAutomaticRedirections {
             get => mRequest.redirectLimit;
             set => mRequest.redirectLimit = value;
         }
@@ -154,34 +132,36 @@ namespace RestSharp
             set {
             }
         }
-        public RequestCachePolicy CachePolicy
-        {
+        public RequestCachePolicy CachePolicy {
             get => throw new NotImplementedException();
-            set
-            {
+            set {
             }
         }
         public DecompressionMethods AutomaticDecompression {
             get => DecompressionMethods.None;
-            set
-            {
+            set {
             }
         }
-        public bool Expect100Continue
-        {
-            get => mRequest.useHttpContinue;
-            set => mRequest.useHttpContinue = true;
-        }
-        public WebProxy Proxy { get => throw new NotImplementedException(); set
-            {
+        public WebProxy Proxy { get => throw new NotImplementedException(); set {
 
             }
         }
-        public ICredentials Credentials
-        {
+        public ICredentials Credentials {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
+        public string Connection {
+            get => Headers.Get("Connection");
+            set => Headers.Set("Connection", value);
+        }
+
+        public ServicePoint ServicePoint {get; private set;}
+
+        IWebProxy IHttpWebRequest.Proxy { get; set; }
+        public WebHeaderCollection Headers { get; set; }
+        public CookieContainer CookieContainer { get; set; }
+
+        public X509CertificateCollection ClientCertificates => throw new NotImplementedException();
 
         public void Abort()
         {
@@ -195,7 +175,6 @@ namespace RestSharp
 
         public IAsyncResult BeginGetRequestStream(AsyncCallback callback, IHttpWebRequest webRequest)
         {
-            mRequestStream = new MemoryStream();
             var result = new UnityWebRequestResult(this);
             result.Complete(true);
             callback(result);
@@ -219,8 +198,13 @@ namespace RestSharp
 
         private UnityWebRequestAsyncOperation SendRequest()
         {
+            mRequest.useHttpContinue = ServicePoint.Expect100Continue;
             mRequest.downloadHandler = new DownloadHandlerBuffer();
-            mRequest.SetRequestHeader("Cookie", mCookies.GetCookieHeader(mRequest.uri));
+            Headers.Set("Cookie", CookieContainer.GetCookieHeader(mRequest.uri));
+
+            foreach ( var key in Headers.AllKeys) {
+                mRequest.SetRequestHeader(key, Headers[key]);
+            }
 
             if (mRequestStream != null)
             {
@@ -236,6 +220,11 @@ namespace RestSharp
         public IHttpWebResponse EndGetResponse(IAsyncResult asyncResult)
         {
             while (!mOperation.isDone);
+
+            if (mRequest.isNetworkError) {
+                throw new WebException(mRequest.error);
+            }
+
             return new UnityWebResponse(mRequest);
         }
 
@@ -248,6 +237,11 @@ namespace RestSharp
         {
             mOperation = SendRequest();
             while (!mOperation.isDone);
+
+            if (mRequest.isNetworkError) {
+                throw new WebException(mRequest.error);
+            }
+
             return new UnityWebResponse(mRequest);
         }
 
@@ -294,12 +288,12 @@ namespace RestSharp
 
         public void AddHeader(string name, string value)
         {
-            mRequest.SetRequestHeader(name, value);
+            Headers.Set(name, value);
         }
 
         public void AddCookie(Cookie cookie)
         {
-            mCookies.Add(mRequest.uri, cookie);
+            CookieContainer.Add(mRequest.uri, cookie);
         }
 
         public Stream EndGetRequestStream(IAsyncResult asyncResult)

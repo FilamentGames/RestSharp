@@ -420,7 +420,7 @@ namespace RestSharp
 
             webRequest.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip | DecompressionMethods.None;
 
-            webRequest.Expect100Continue = false;
+            webRequest.ServicePoint.Expect100Continue = false;
 
             if (Timeout != 0)
             {

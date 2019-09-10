@@ -230,7 +230,7 @@ namespace RestSharp
         // TODO: duplication at the moment).
         private IHttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
-            var webRequest = new UnityWebRequestWrapper(url);
+            IHttpWebRequest webRequest = new UnityWebRequestWrapper(url);
 #if !PocketPC
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 #endif

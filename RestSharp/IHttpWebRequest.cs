@@ -28,18 +28,21 @@ namespace RestSharp
         bool UnsafeAuthenticatedConnectionSharing { get; set; }
         string Method { get; set; }
         string UserAgent { get; set; }
+        string Connection { get; set; }
+        ServicePoint ServicePoint { get; }
         DecompressionMethods AutomaticDecompression { get; set; }
         int Timeout { get; set; }
         int ReadWriteTimeout { get; set; }
         bool AllowAutoRedirect { get; set; }
-        bool Expect100Continue { get; set; }
         int MaximumAutomaticRedirections { get; set; }
         RemoteCertificateValidationCallback ServerCertificateValidationCallback { get; set; }
         string ConnectionGroupName { get; set; }
         RequestCachePolicy CachePolicy { get; set; }
-        WebProxy Proxy { get; set; }
-
+        IWebProxy Proxy { get; set; }
+        WebHeaderCollection Headers { get; set; }
         ICredentials Credentials { get; set; }
+        CookieContainer CookieContainer { get; set; }
+        X509CertificateCollection ClientCertificates { get; }
 
         void GetResponseAsync();
         IAsyncResult BeginGetResponse(AsyncCallback callback, IHttpWebRequest webRequest);
@@ -50,7 +53,5 @@ namespace RestSharp
         void Abort();
         void AddRange(string rangeSpecifier, long from, long to);
         Stream GetRequestStream();
-        void AddHeader(string name, string value);
-        void AddCookie(Cookie cookie);
     }
 }
