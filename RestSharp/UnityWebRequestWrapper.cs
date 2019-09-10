@@ -17,11 +17,13 @@ namespace RestSharp
         private UnityWebRequest mRequest;
         private UnityWebRequestAsyncOperation mOperation;
         private MemoryStream mRequestStream;
+        private CookieContainer mCookies;
 
         public UnityWebRequestWrapper(Uri url) 
         {
             mRequest = new UnityWebRequest(url);
             mRequest.useHttpContinue = false;
+            mCookies = new CookieContainer();
         }
 
         public string ContentType
@@ -202,7 +204,23 @@ namespace RestSharp
 
         public IAsyncResult BeginGetResponse(AsyncCallback callback, IHttpWebRequest webRequest)
         {
+            mOperation = SendRequest();
+
+            var result = new UnityWebRequestResult(this);
+
+            mOperation.completed += (UnityEngine.AsyncOperation obj) =>
+            {
+                result.Complete(false);
+                callback(result);
+            };
+
+            return result;
+        }
+
+        private UnityWebRequestAsyncOperation SendRequest()
+        {
             mRequest.downloadHandler = new DownloadHandlerBuffer();
+            mRequest.SetRequestHeader("Cookie", mCookies.GetCookieHeader(mRequest.uri));
 
             if (mRequestStream != null)
             {
@@ -212,16 +230,7 @@ namespace RestSharp
                 mRequest.uploadHandler = uploadHandler;
             }
 
-            mOperation = mRequest.SendWebRequest();
-
-            var result = new UnityWebRequestResult(this);
-
-            mOperation.completed += (UnityEngine.AsyncOperation obj) => {
-                result.Complete(false);
-                callback(result);
-            };
-
-            return result;
+            return mRequest.SendWebRequest();
         }
 
         private void handleOperationCompleted(UnityEngine.AsyncOperation obj)
@@ -242,19 +251,8 @@ namespace RestSharp
 
         public IHttpWebResponse GetResponse()
         {
-            mRequest.downloadHandler = new DownloadHandlerBuffer();
-
-            if (mRequestStream != null)
-            {
-                var uploadHandler = new UploadHandlerRaw(mRequestStream.GetBuffer());
-                mRequestStream.Close();
-                mRequestStream = null;
-                mRequest.uploadHandler = uploadHandler;
-            }
-
-            mOperation = mRequest.SendWebRequest();
-
-
+            mOperation = SendRequest();
+            while (!mOperation.isDone);
             return new UnityWebResponse(mRequest);
         }
 
@@ -272,7 +270,8 @@ namespace RestSharp
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects).
+                    // dispose managed state (managed objects).
+                    mRequest.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -300,12 +299,12 @@ namespace RestSharp
 
         public void AddHeader(string name, string value)
         {
-            throw new NotImplementedException();
+            mRequest.SetRequestHeader(name, value);
         }
 
         public void AddCookie(Cookie cookie)
         {
-            throw new NotImplementedException();
+            mCookies.Add(mRequest.uri, cookie);
         }
 
         public Stream EndGetRequestStream(IAsyncResult asyncResult)

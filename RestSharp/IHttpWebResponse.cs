@@ -12,7 +12,7 @@ namespace RestSharp
         string ContentEncoding { get; }
         string Server { get; }
         Version ProtocolVersion { get; }
-        ICollection<Cookie> Cookies { get; }
+        CookieCollection Cookies { get; }
         string ContentType { get; }
         long ContentLength { get; }
         HttpStatusCode StatusCode { get; }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Text;
 using UnityEngine.Networking;
 
 namespace RestSharp
@@ -12,36 +12,48 @@ namespace RestSharp
     {
         private UnityWebRequest mRequest;
         private MemoryStream mResponseStream;
+        private CookieContainer mResponseCookies;
 
-        public string ContentEncoding => throw new NotImplementedException();
+        public string ContentEncoding => mRequest.GetResponseHeader("Content-Encoding");
 
-        public string Server => throw new NotImplementedException();
+        public string Server => mRequest.GetResponseHeader("Server");
 
-        public Version ProtocolVersion => throw new NotImplementedException();
+        public Version ProtocolVersion => HttpVersion.Version10;
 
-        public ICollection<Cookie> Cookies => throw new NotImplementedException();
+        public CookieCollection Cookies => mResponseCookies.GetCookies(mRequest.uri);
 
-        public string ContentType => throw new NotImplementedException();
+        public string ContentType => mRequest.GetResponseHeader("Content-Type");
 
-        public long ContentLength => throw new NotImplementedException();
+        public long ContentLength => long.Parse(mRequest.GetResponseHeader("Content-Length"));
 
-        public HttpStatusCode StatusCode => throw new NotImplementedException();
+        public HttpStatusCode StatusCode => (HttpStatusCode) mRequest.responseCode;
 
-        public string StatusDescription => throw new NotImplementedException();
+        public string StatusDescription => mRequest.error;
 
-        public Uri ResponseUri => throw new NotImplementedException();
+        public Uri ResponseUri => mRequest.uri;
 
-        public NameValueCollection Headers => throw new NotImplementedException();
+        public NameValueCollection Headers { get; private set; }
 
         public UnityWebResponse(UnityWebRequest request)
         {
             mRequest = request;
             mResponseStream = new MemoryStream(mRequest.downloadHandler.data);
+            Headers = mRequest.GetResponseHeaders().Aggregate(new NameValueCollection(),
+                (seed, current) => {
+                    seed.Add(current.Key, current.Value);
+                    return seed;
+                });
+
+            mResponseCookies = new CookieContainer();
+            mResponseCookies.SetCookies(mRequest.uri, mRequest.GetResponseHeader("Cookie"));
         }
 
         public void Close()
         {
-            mRequest.Dispose();
+            mResponseStream.Close();
+            mResponseStream = null;
+            mRequest = null;
+            Headers = null;
         }
 
         public Stream GetResponseStream()
