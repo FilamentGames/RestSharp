@@ -20,7 +20,6 @@ namespace RestSharp
         public UnityWebRequestWrapper(Uri url) {
             mRequest = new UnityWebRequest(url);
             mRequest.useHttpContinue = false;
-            mRequestStream = new MemoryStream();
             CookieContainer = new CookieContainer();
             Headers = new WebHeaderCollection();
             ServicePoint = ServicePointManager.FindServicePoint(url);
@@ -202,13 +201,18 @@ namespace RestSharp
             mRequest.downloadHandler = new DownloadHandlerBuffer();
             Headers.Set("Cookie", CookieContainer.GetCookieHeader(mRequest.uri));
 
-            foreach ( var key in Headers.AllKeys) {
+            foreach ( var key in Headers.AllKeys) 
+            {
                 mRequest.SetRequestHeader(key, Headers[key]);
             }
 
             if (mRequestStream != null)
             {
-                var uploadHandler = new UploadHandlerRaw(mRequestStream.GetBuffer());
+                MemoryStream readStream = new MemoryStream(mRequestStream.ToArray());
+                byte[] buffer = new byte[readStream.Length];
+                readStream.Position = 0;
+                readStream.Read(buffer, 0, (int)readStream.Length);
+                var uploadHandler = new UploadHandlerRaw(buffer);
                 mRequestStream.Close();
                 mRequestStream = null;
                 mRequest.uploadHandler = uploadHandler;
@@ -230,6 +234,7 @@ namespace RestSharp
 
         public Stream GetRequestStream()
         {
+            mRequestStream = new MemoryStream();
             return mRequestStream;
         }
 
@@ -298,6 +303,7 @@ namespace RestSharp
 
         public Stream EndGetRequestStream(IAsyncResult asyncResult)
         {
+            mRequestStream = new MemoryStream();
             return mRequestStream;
         }
         #endregion

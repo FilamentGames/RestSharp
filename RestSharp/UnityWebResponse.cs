@@ -45,7 +45,10 @@ namespace RestSharp
                 });
 
             mResponseCookies = new CookieContainer();
-            mResponseCookies.SetCookies(mRequest.uri, mRequest.GetResponseHeader("Cookie"));
+            string cookieHeader = mRequest.GetResponseHeader("Cookie");
+            if (cookieHeader != null) {
+                mResponseCookies.SetCookies(mRequest.uri, cookieHeader);
+            }
         }
 
         public void Close()
