@@ -377,7 +377,7 @@ namespace RestSharp
             WebRequest.RegisterPrefix("http://", WebRequestCreator.ClientHttp);
             WebRequest.RegisterPrefix("https://", WebRequestCreator.ClientHttp);
 #endif
-            var webRequest = (IHttpWebRequest)WebRequest.Create(url);
+            var webRequest = (IHttpWebRequest)new UnityWebRequestWrapper(url);
 #if !PocketPC
             webRequest.UseDefaultCredentials = UseDefaultCredentials;
 #endif
