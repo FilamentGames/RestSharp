@@ -55,8 +55,11 @@ namespace RestSharp
 
         public void Close()
         {
-            mResponseStream.Close();
-            mResponseStream = null;
+            if (mResponseStream != null) {
+                mResponseStream.Close();
+                mResponseStream = null;
+            }
+
             mRequest = null;
             Headers = null;
         }
