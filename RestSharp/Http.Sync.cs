@@ -239,7 +239,6 @@ namespace RestSharp
             webRequest.ServicePoint.Expect100Continue = false;
 
             AppendHeaders(webRequest);
-            AppendCookies(webRequest);
 
             webRequest.Method = method;
 

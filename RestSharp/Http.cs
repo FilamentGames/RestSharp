@@ -294,38 +294,6 @@ namespace RestSharp
             }
         }
 
-        private void AppendCookies(IHttpWebRequest webRequest)
-        {
-#if !PocketPC
-            webRequest.CookieContainer = this.CookieContainer ?? new CookieContainer();
-#endif
-            foreach (var httpCookie in Cookies)
-            {
-#if !PocketPC
-#if FRAMEWORK
-                var cookie = new Cookie
-                {
-                    Name = httpCookie.Name,
-                    Value = httpCookie.Value,
-                    Domain = webRequest.RequestUri.Host
-                };
-
-                webRequest.CookieContainer.Add(cookie);
-#else
-                var cookie = new Cookie
-                {
-                    Name = httpCookie.Name,
-                    Value = httpCookie.Value
-                };
-
-                var uri = webRequest.RequestUri;
-
-                webRequest.CookieContainer.Add(new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host)), cookie);
-#endif
-#endif
-            }
-        }
-
         private string EncodeParameters()
         {
             var querystring = new StringBuilder();

@@ -4,7 +4,6 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Net.Cache;
-using System.Collections.Specialized;
 
 namespace RestSharp
 {
@@ -41,7 +40,6 @@ namespace RestSharp
         IWebProxy Proxy { get; set; }
         WebHeaderCollection Headers { get; set; }
         ICredentials Credentials { get; set; }
-        CookieContainer CookieContainer { get; set; }
         X509CertificateCollection ClientCertificates { get; }
 
         void GetResponseAsync();

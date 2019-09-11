@@ -19,7 +19,6 @@ namespace RestSharp
 
         public UnityWebRequestWrapper(Uri url) {
             mRequest = new UnityWebRequest(url);
-            CookieContainer = new CookieContainer();
             Headers = new WebHeaderCollection();
             ServicePoint = ServicePointManager.FindServicePoint(url);
         }
@@ -157,7 +156,6 @@ namespace RestSharp
 
         IWebProxy IHttpWebRequest.Proxy { get; set; }
         public WebHeaderCollection Headers { get; set; }
-        public CookieContainer CookieContainer { get; set; }
 
         public X509CertificateCollection ClientCertificates => throw new NotImplementedException();
 
@@ -198,7 +196,6 @@ namespace RestSharp
         {
             mRequest.useHttpContinue = ServicePoint.Expect100Continue;
             mRequest.downloadHandler = new DownloadHandlerBuffer();
-            Headers.Set("Cookie", CookieContainer.GetCookieHeader(mRequest.uri));
 
             foreach ( var key in Headers.AllKeys) 
             {
@@ -288,16 +285,6 @@ namespace RestSharp
             Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
-        }
-
-        public void AddHeader(string name, string value)
-        {
-            Headers.Set(name, value);
-        }
-
-        public void AddCookie(Cookie cookie)
-        {
-            CookieContainer.Add(mRequest.uri, cookie);
         }
 
         public Stream EndGetRequestStream(IAsyncResult asyncResult)

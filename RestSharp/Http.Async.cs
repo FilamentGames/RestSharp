@@ -386,7 +386,6 @@ namespace RestSharp
             webRequest.PreAuthenticate = PreAuthenticate;
 #endif
             AppendHeaders(webRequest);
-            AppendCookies(webRequest);
 
             webRequest.Method = method;
 
