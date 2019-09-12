@@ -22,7 +22,7 @@ namespace RestSharp
         /**
          * Certain headers aren't supported in webgl
          */
-        private static readonly List<string> WEBGL_FORBIDDEN_HEADERS = new List<string> { "Accept-Charset", "Accept-Encoding", "Connection", "Content-Length", "Cookie", "Expect", "Host", "Keep-Alive", "Referer", "Transfer-Encoding", "Date" };
+        private static readonly List<string> WEBGL_FORBIDDEN_HEADERS = new List<string> { "Accept-Charset", "Accept-Encoding", "Connection", "Content-Length", "Cookie", "Expect", "Host", "Keep-Alive", "Referer", "Transfer-Encoding", "Date", "Origin" };
 
         public UnityWebRequestWrapper(Uri url) {
             mRequest = new UnityWebRequest(url);
