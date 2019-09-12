@@ -8,6 +8,8 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using UnityEngine.Networking;
+using UnityEngine;
+using System.Collections.Generic;
 
 namespace RestSharp 
 {
@@ -16,6 +18,11 @@ namespace RestSharp
         private UnityWebRequest mRequest;
         private UnityWebRequestAsyncOperation mOperation;
         private MemoryStream mRequestStream;
+
+        /**
+         * Certain headers aren't supported in webgl
+         */
+        private static readonly List<string> WEBGL_FORBIDDEN_HEADERS = new List<string> { "Accept-Charset", "Accept-Encoding", "Connection", "Content-Length", "Cookie", "Expect", "Host", "Keep-Alive", "Referer", "Transfer-Encoding", "Date" };
 
         public UnityWebRequestWrapper(Uri url) {
             mRequest = new UnityWebRequest(url);
@@ -199,6 +206,13 @@ namespace RestSharp
 
             foreach ( var key in Headers.AllKeys) 
             {
+                if (Application.platform == RuntimePlatform.WebGLPlayer) {
+                    if (WEBGL_FORBIDDEN_HEADERS.Contains(key)) {
+                        //Ignore the header
+                        continue;
+                    }
+                }
+
                 mRequest.SetRequestHeader(key, Headers[key]);
             }
 
