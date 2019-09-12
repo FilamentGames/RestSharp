@@ -22,7 +22,7 @@ namespace RestSharp
         /**
          * Certain headers aren't supported in webgl
          */
-        private static readonly List<string> WEBGL_FORBIDDEN_HEADERS = new List<string> { "Accept-Charset", "Accept-Encoding", "Connection", "Content-Length", "Cookie", "Expect", "Host", "Keep-Alive", "Referer", "Transfer-Encoding", "Date", "Origin" };
+        private static readonly List<string> WEBGL_FORBIDDEN_HEADERS = new List<string> { "User-Agent", "Accept-Charset", "Accept-Encoding", "Access-Control-Request-Headers", "Access-Control-Request-Method", "Connection", "Content-Length", "Cookie", "Cookie2", "Date", "DNT", "Expect", "Host", "Keep-Alive", "Origin", "Referer", "TE", "Trailer", "Transfer-Encoding", "Upgrade", "Via", "Sec-", "Proxy-"};
 
         public UnityWebRequestWrapper(Uri url) {
             mRequest = new UnityWebRequest(url);
@@ -207,8 +207,7 @@ namespace RestSharp
             foreach ( var key in Headers.AllKeys) 
             {
                 if (Application.platform == RuntimePlatform.WebGLPlayer) {
-                    if (WEBGL_FORBIDDEN_HEADERS.Contains(key)) {
-                        //Ignore the header
+                    if (WEBGL_FORBIDDEN_HEADERS.Exists(x => key.StartsWith(x))) {
                         continue;
                     }
                 }
