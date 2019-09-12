@@ -12,7 +12,6 @@ namespace RestSharp
     {
         private UnityWebRequest mRequest;
         private MemoryStream mResponseStream;
-        private CookieContainer mResponseCookies;
 
         public string ContentEncoding => mRequest.GetResponseHeader("Content-Encoding");
 
@@ -20,7 +19,7 @@ namespace RestSharp
 
         public Version ProtocolVersion => HttpVersion.Version10;
 
-        public CookieCollection Cookies => mResponseCookies.GetCookies(mRequest.uri);
+        public CookieCollection Cookies { get; private set; }
 
         public string ContentType => mRequest.GetResponseHeader("Content-Type");
 
@@ -46,10 +45,11 @@ namespace RestSharp
                     return seed;
                 });
 
-            mResponseCookies = new CookieContainer();
+
+            Cookies = new CookieCollection();
             string cookieHeader = mRequest.GetResponseHeader("Cookie");
             if (cookieHeader != null) {
-                mResponseCookies.SetCookies(mRequest.uri, cookieHeader);
+                //TODO: Parse the cookies into the cookie collection
             }
         }
 
