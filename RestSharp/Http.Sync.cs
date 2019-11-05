@@ -137,7 +137,7 @@ namespace RestSharp
             }
         }
 
-        private HttpResponse GetResponse(HttpWebRequest request)
+        private HttpResponse GetResponse(IHttpWebRequest request)
         {
             var response = new HttpResponse {ResponseStatus = ResponseStatus.None};
 
@@ -155,11 +155,11 @@ namespace RestSharp
             return response;
         }
 
-        private static HttpWebResponse GetRawResponse(HttpWebRequest request)
+        private static IHttpWebResponse GetRawResponse(IHttpWebRequest request)
         {
             try
             {
-                return (HttpWebResponse) request.GetResponse();
+                return (IHttpWebResponse) request.GetResponse();
             }
             catch (WebException ex)
             {
@@ -169,14 +169,14 @@ namespace RestSharp
                 // transport exception (ex: connection timeout) and
                 // rethrow the exception
 
-                if (ex.Response is HttpWebResponse response)
+                if (ex.Response is IHttpWebResponse response)
                     return response;
 
                 throw;
             }
         }
 
-        private void WriteRequestBody(HttpWebRequest webRequest)
+        private void WriteRequestBody(IHttpWebRequest webRequest)
         {
             if (HasBody || HasFiles || AlwaysMultipartFormData)
                 webRequest.ContentLength = CalculateContentLength();
@@ -192,7 +192,7 @@ namespace RestSharp
             }
         }
 
-        protected virtual HttpWebRequest ConfigureWebRequest(string method, Uri url)
+        protected virtual IHttpWebRequest ConfigureWebRequest(string method, Uri url)
         {
             var webRequest = CreateWebRequest(url);
 
@@ -214,7 +214,7 @@ namespace RestSharp
             }
             
             AppendHeaders(webRequest);
-            AppendCookies(webRequest);
+            //AppendCookies(webRequest);
 
             if (Host != null) webRequest.Host = Host;
 

@@ -39,7 +39,7 @@ namespace RestSharp
 
         private const string FormBoundary = "-----------------------------28947758029299";
 
-        private readonly IDictionary<string, Action<HttpWebRequest, string>> restrictedHeaderActions;
+        private readonly IDictionary<string, Action<IHttpWebRequest, string>> restrictedHeaderActions;
 
         /// <summary>
         ///     Default constructor
@@ -50,7 +50,7 @@ namespace RestSharp
             Files = new List<HttpFile>();
             Parameters = new List<HttpParameter>();
             Cookies = new List<HttpCookie>();
-            restrictedHeaderActions = new Dictionary<string, Action<HttpWebRequest, string>>(
+            restrictedHeaderActions = new Dictionary<string, Action<IHttpWebRequest, string>>(
                 StringComparer.OrdinalIgnoreCase);
 
             AddSharedHeaderActions();
@@ -241,10 +241,10 @@ namespace RestSharp
         /// <returns></returns>
         public static IHttp Create() => new Http();
 
-        protected virtual HttpWebRequest CreateWebRequest(Uri url) => (HttpWebRequest) WebRequest.Create(url);
+        protected virtual IHttpWebRequest CreateWebRequest(Uri url) => new UnityWebRequestWrapper(url);
 
-        public Action<HttpWebRequest> WebRequestConfigurator { get; set; }
-        
+        public Action<IHttpWebRequest> WebRequestConfigurator { get; set; }
+
         partial void AddSyncHeaderActions();
 
         private void AddSharedHeaderActions()
@@ -290,30 +290,13 @@ namespace RestSharp
 
         // handle restricted headers the .NET way - thanks @dimebrain!
         // http://msdn.microsoft.com/en-us/library/system.net.httpwebrequest.headers.aspx
-        private void AppendHeaders(HttpWebRequest webRequest)
+        private void AppendHeaders(IHttpWebRequest webRequest)
         {
             foreach (var header in Headers)
                 if (restrictedHeaderActions.ContainsKey(header.Name))
                     restrictedHeaderActions[header.Name].Invoke(webRequest, header.Value);
                 else
                     webRequest.Headers.Add(header.Name, header.Value);
-        }
-
-        private void AppendCookies(HttpWebRequest webRequest)
-        {
-            webRequest.CookieContainer = CookieContainer ?? new CookieContainer();
-
-            foreach (var httpCookie in Cookies)
-            {
-                var cookie = new Cookie
-                {
-                    Name = httpCookie.Name,
-                    Value = httpCookie.Value,
-                    Domain = webRequest.RequestUri.Host
-                };
-
-                webRequest.CookieContainer.Add(cookie);
-            }
         }
 
         private string EncodeParameters()
@@ -331,7 +314,7 @@ namespace RestSharp
             return querystring.ToString();
         }
 
-        private void PreparePostBody(WebRequest webRequest)
+        private void PreparePostBody(IHttpWebRequest webRequest)
         {
             bool needsContentType = string.IsNullOrEmpty(webRequest.ContentType);
 
@@ -380,7 +363,7 @@ namespace RestSharp
             WriteStringTo(requestStream, GetMultipartFooter());
         }
 
-        private void ExtractResponseData(HttpResponse response, HttpWebResponse webResponse)
+        private void ExtractResponseData(HttpResponse response, IHttpWebResponse webResponse)
         {
             using (webResponse)
             {
@@ -448,7 +431,7 @@ namespace RestSharp
 
         private static readonly Regex AddRangeRegex = new Regex("(\\w+)=(\\d+)-(\\d+)$");
 
-        private static void AddRange(HttpWebRequest r, string range)
+        private static void AddRange(IHttpWebRequest r, string range)
         {
             var m = AddRangeRegex.Match(range);
 

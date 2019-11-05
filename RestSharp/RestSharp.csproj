@@ -18,6 +18,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\Program Files\Unity\Hub\Editor\2019.2.3f1\Editor\Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />

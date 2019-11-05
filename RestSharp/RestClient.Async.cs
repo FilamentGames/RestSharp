@@ -350,7 +350,7 @@ namespace RestSharp
 
         private RestRequestAsyncHandle ExecuteAsync(IRestRequest request,
             Action<IRestResponse, RestRequestAsyncHandle> callback, string httpMethod,
-            Func<IHttp, Action<HttpResponse>, string, HttpWebRequest> getWebRequest)
+            Func<IHttp, Action<HttpResponse>, string, IHttpWebRequest> getWebRequest)
         {
             AuthenticateIfNeeded(this, request);
             var http = ConfigureHttp(request);
@@ -371,10 +371,10 @@ namespace RestSharp
             return asyncHandle;
         }
 
-        private static HttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> responseCb, string method) 
+        private static IHttpWebRequest DoAsGetAsync(IHttp http, Action<HttpResponse> responseCb, string method) 
             => http.AsGetAsync(responseCb, method);
 
-        private static HttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method) 
+        private static IHttpWebRequest DoAsPostAsync(IHttp http, Action<HttpResponse> responseCb, string method) 
             => http.AsPostAsync(responseCb, method);
 
         private static void ProcessResponse(IRestRequest request, HttpResponse httpResponse,

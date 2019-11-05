@@ -158,7 +158,7 @@ namespace RestSharp
         /// Add a delegate to apply custom configuration to HttpWebRequest before making a call
         /// </summary>
         /// <param name="configurator">Configuration delegate for HttpWebRequest</param>
-        void ConfigureWebRequest(Action<HttpWebRequest> configurator);
+        void ConfigureWebRequest(Action<IHttpWebRequest> configurator);
 
         /// <summary>
         /// Adds or replaces a deserializer for the specified content type

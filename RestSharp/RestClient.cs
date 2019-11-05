@@ -101,7 +101,7 @@ namespace RestSharp
 
         private IList<string> AcceptTypes { get; }
 
-        private Action<HttpWebRequest> WebRequestConfigurator { get; set; }
+        private Action<IHttpWebRequest> WebRequestConfigurator { get; set; }
 
         /// <summary>
         /// Enable or disable automatic gzip/deflate decompression
@@ -272,7 +272,7 @@ namespace RestSharp
         public IRestResponse<T> Deserialize<T>(IRestResponse response)
             => Deserialize<T>(response.Request, response);
 
-        public void ConfigureWebRequest(Action<HttpWebRequest> configurator) =>
+        public void ConfigureWebRequest(Action<IHttpWebRequest> configurator) =>
             WebRequestConfigurator = configurator;
 
         /// <summary>
