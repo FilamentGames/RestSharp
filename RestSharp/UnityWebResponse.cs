@@ -6,10 +6,8 @@ using System.Linq;
 using System.Net;
 using UnityEngine.Networking;
 
-namespace RestSharp
-{
-    public class UnityWebResponse : IHttpWebResponse
-    {
+namespace RestSharp {
+    public class UnityWebResponse : IHttpWebResponse {
         private UnityWebRequest mRequest;
         private MemoryStream mResponseStream;
 
@@ -23,7 +21,16 @@ namespace RestSharp
 
         public string ContentType => mRequest.GetResponseHeader("Content-Type");
 
-        public long ContentLength => long.Parse(mRequest.GetResponseHeader("Content-Length"));
+        public long ContentLength {
+            get {
+                string contentLengthStr = mRequest.GetResponseHeader("Content-Length");
+                if (contentLengthStr == null) {
+                    return 0;
+                } else {
+                    return long.Parse(contentLengthStr);
+                }
+            }
+        }
 
         public HttpStatusCode StatusCode => (HttpStatusCode) mRequest.responseCode;
 
